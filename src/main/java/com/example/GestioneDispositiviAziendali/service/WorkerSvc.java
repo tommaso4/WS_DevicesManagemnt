@@ -43,6 +43,12 @@ public class WorkerSvc {
         return workerRepo.save(worker);
     }
 
+    public Worker uploadImgWorker (int id, String urlImg) throws NotFoundException {
+        Worker worker = getWoerkerById(id);
+        worker.setUrlImg(urlImg);
+        return workerRepo.save(worker);
+    }
+
     public void deleteWorker (int id) throws NotFoundException {
         Worker worker = getWoerkerById(id);
         workerRepo.delete(worker);

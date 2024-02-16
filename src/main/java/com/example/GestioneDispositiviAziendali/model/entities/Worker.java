@@ -16,8 +16,7 @@ public class Worker {
     private String name;
     private String surname;
     private String email;
-
-//    private String urlImg;
+    private String urlImg;
     @OneToMany(mappedBy = "worker", fetch = FetchType.EAGER)
     List<Device> deviceList = new ArrayList<Device>();
 }

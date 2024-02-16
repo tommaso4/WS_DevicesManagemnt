@@ -11,6 +11,5 @@ public class DeviceRequest {
     private TypeDev deviceType;
     @NotNull(message = "stutus is not specified")
     private StatusDev status;
-    @NotNull(message = "idWorker is not specified")
     private Integer idWorker;
 }

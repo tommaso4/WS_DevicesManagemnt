@@ -2,6 +2,7 @@ package com.example.GestioneDispositiviAziendali.controller;
 
 import com.example.GestioneDispositiviAziendali.exceptionHandler.NotFoundException;
 import com.example.GestioneDispositiviAziendali.model.entities.Device;
+import com.example.GestioneDispositiviAziendali.model.request.DevForWorkReq;
 import com.example.GestioneDispositiviAziendali.model.request.DeviceRequest;
 import com.example.GestioneDispositiviAziendali.service.DeviceSvc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +33,34 @@ public class DeviceCtrl {
     }
 
     @PostMapping("/device")
-    public ResponseEntity<CustomResponse> saveDevice(@RequestBody @Validated DeviceRequest deviceRequest,
+    public ResponseEntity<CustomResponse> createDevice(@RequestBody @Validated DeviceRequest deviceRequest,
                                                      BindingResult bindingResult) throws NotFoundException {
         if (bindingResult.hasErrors()){
             String errorMessage = bindingResult.getAllErrors().stream()
                     .map(objectError -> objectError.getDefaultMessage()).toList().toString();
             return CustomResponse.failure(errorMessage,HttpStatus.BAD_REQUEST);
         }
-        Device device = deviceSvc.saveDevice(deviceRequest);
+        Device device = deviceSvc.createDevice(deviceRequest);
         return CustomResponse.success(HttpStatus.CREATED.toString(),device,HttpStatus.CREATED);
     }
 
+    @PutMapping("/device/assign/{id}")
+    public ResponseEntity<CustomResponse> assignDevice(@PathVariable int id,
+                                                       @RequestBody @Validated DevForWorkReq dev,
+                                                       BindingResult bindingResult) throws NotFoundException {
+
+        if (bindingResult.hasErrors()){
+            String errorMSg = bindingResult.getAllErrors().stream()
+                    .map(objectError ->objectError.getDefaultMessage()).toList().toString();
+            return CustomResponse.failure(errorMSg,HttpStatus.BAD_REQUEST);
+        }
+
+        Device device = deviceSvc.upDateWorkerToDevice(id,dev);
+        return CustomResponse.success(HttpStatus.OK.toString(),device,HttpStatus.OK);
+    }
+
     @PutMapping("/device/{id}")
-    public ResponseEntity<CustomResponse> upLoadDevice (@PathVariable int id,
+    public ResponseEntity<CustomResponse> upDateDevice (@PathVariable int id,
                                                         @RequestBody @Validated DeviceRequest deviceRequest,
                                                         BindingResult bindingResult) throws NotFoundException {
 
@@ -54,9 +70,13 @@ public class DeviceCtrl {
             return CustomResponse.failure(errorMSg,HttpStatus.BAD_REQUEST);
         }
 
-        Device device = deviceSvc.upLoadDevice(id,deviceRequest);
+        Device device = deviceSvc.upDateDevice(id,deviceRequest);
         return CustomResponse.success(HttpStatus.OK.toString(),device,HttpStatus.OK);
     }
+
+
+
+
     @DeleteMapping("/device/{id}")
     public ResponseEntity<CustomResponse> deleteDevice(@PathVariable int id) throws NotFoundException {
         deviceSvc.deleteDevice(id);
