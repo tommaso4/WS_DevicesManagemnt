@@ -22,42 +22,42 @@ public class WorkerCtrl {
     @GetMapping("/worker")
     public ResponseEntity<CustomResponse> getAllWorkers(Pageable pageable) {
         Page<Worker> workers = workerSvc.getAllWorker(pageable);
-        return CustomResponse.success(HttpStatus.OK.toString(),workers,HttpStatus.OK);
+        return CustomResponse.success(HttpStatus.OK.toString(), workers, HttpStatus.OK);
     }
 
-    @GetMapping("/worker{id}")
+    @GetMapping("/worker/{id}")
     public ResponseEntity<CustomResponse> getWorkerById(@PathVariable int id) throws NotFoundException {
         Worker worker = workerSvc.getWoerkerById(id);
-        return CustomResponse.success(HttpStatus.OK.toString(),worker,HttpStatus.OK);
+        return CustomResponse.success(HttpStatus.OK.toString(), worker, HttpStatus.OK);
     }
 
     @PostMapping("/worker")
-    public ResponseEntity<CustomResponse> saveWorker(@RequestBody @Validated WorkerRequest workerRequest, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
+    public ResponseEntity<CustomResponse> saveWorker(@RequestBody @Validated WorkerRequest workerRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getAllErrors().stream()
                     .map(objectError -> objectError.getDefaultMessage()).toList().toString();
-            return CustomResponse.failure(errorMessage,HttpStatus.BAD_REQUEST);
+            return CustomResponse.failure(errorMessage, HttpStatus.BAD_REQUEST);
         }
         Worker worker = workerSvc.saveWorker(workerRequest);
-        return CustomResponse.success(HttpStatus.CREATED.toString(),worker,HttpStatus.CREATED);
+        return CustomResponse.success(HttpStatus.CREATED.toString(), worker, HttpStatus.CREATED);
     }
 
-    @PutMapping("/worker{id}")
+    @PutMapping("/worker/{id}")
     public ResponseEntity<CustomResponse> upLoadWorker(@PathVariable int id,
                                                        @RequestBody @Validated WorkerRequest workerRequest,
                                                        BindingResult bindingResult) throws NotFoundException {
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getAllErrors().stream()
                     .map(objectError -> objectError.getDefaultMessage()).toList().toString();
-            return CustomResponse.failure(errorMessage,HttpStatus.BAD_REQUEST);
+            return CustomResponse.failure(errorMessage, HttpStatus.BAD_REQUEST);
         }
-        Worker worker = workerSvc.upDateWorker(id,workerRequest);
-        return CustomResponse.success(HttpStatus.OK.toString(),worker,HttpStatus.OK);
+        Worker worker = workerSvc.upDateWorker(id, workerRequest);
+        return CustomResponse.success(HttpStatus.OK.toString(), worker, HttpStatus.OK);
     }
 
-    @DeleteMapping("/worker{id}")
+    @DeleteMapping("/worker/{id}")
     public ResponseEntity<CustomResponse> deleteWorker(@PathVariable int id) throws NotFoundException {
         workerSvc.deleteWorker(id);
-        return CustomResponse.emptyResponse(HttpStatus.OK.toString(),HttpStatus.OK);
+        return CustomResponse.emptyResponse("Worker with id: " + id + " deleted", HttpStatus.OK);
     }
 }

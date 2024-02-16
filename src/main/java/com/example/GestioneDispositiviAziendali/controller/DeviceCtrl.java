@@ -25,7 +25,7 @@ public class DeviceCtrl {
         return CustomResponse.success(HttpStatus.OK.toString(),devices,HttpStatus.OK);
     }
 
-    @GetMapping("/device{id}")
+    @GetMapping("/device/{id}")
     public ResponseEntity<CustomResponse> getDeviceById(@PathVariable int id) throws NotFoundException {
         Device device = deviceSvc.getDevById(id);
         return CustomResponse.success(HttpStatus.OK.toString(),device,HttpStatus.OK);
@@ -43,7 +43,7 @@ public class DeviceCtrl {
         return CustomResponse.success(HttpStatus.CREATED.toString(),device,HttpStatus.CREATED);
     }
 
-    @PutMapping("/device{id}")
+    @PutMapping("/device/{id}")
     public ResponseEntity<CustomResponse> upLoadDevice (@PathVariable int id,
                                                         @RequestBody @Validated DeviceRequest deviceRequest,
                                                         BindingResult bindingResult) throws NotFoundException {
@@ -57,7 +57,7 @@ public class DeviceCtrl {
         Device device = deviceSvc.upLoadDevice(id,deviceRequest);
         return CustomResponse.success(HttpStatus.OK.toString(),device,HttpStatus.OK);
     }
-    @DeleteMapping("/device{id}")
+    @DeleteMapping("/device/{id}")
     public ResponseEntity<CustomResponse> deleteDevice(@PathVariable int id) throws NotFoundException {
         deviceSvc.deleteDevice(id);
         return CustomResponse.emptyResponse("Device with id " + id + " is deleted",HttpStatus.OK);
