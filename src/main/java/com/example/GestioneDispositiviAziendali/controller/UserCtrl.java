@@ -1,15 +1,16 @@
 package com.example.GestioneDispositiviAziendali.controller;
 
 import com.example.GestioneDispositiviAziendali.exceptionHandler.BadRequestEx;
-import com.example.GestioneDispositiviAziendali.exceptionHandler.NotFoundException;
 import com.example.GestioneDispositiviAziendali.model.entities.User;
-import com.example.GestioneDispositiviAziendali.model.request.LoginUser;
+import com.example.GestioneDispositiviAziendali.model.request.LoginRequest;
 import com.example.GestioneDispositiviAziendali.model.request.UserReq;
 import com.example.GestioneDispositiviAziendali.service.UserSvc;
 import com.example.GestioneDispositiviAziendali.sicurity.JwtTools;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,9 @@ public class UserCtrl {
 
     @Autowired
     private JwtTools jwtTools;
+    @Autowired
+    @Qualifier("BCript")
+    private PasswordEncoder encoder;
 
 
     @PostMapping("/auth/register")
@@ -36,16 +40,14 @@ public class UserCtrl {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<CustomResponse> login (@RequestBody @Validated LoginUser loginUser, BindingResult result)
+    public ResponseEntity<CustomResponse> login (@RequestBody @Validated LoginRequest loginUser, BindingResult result)
             throws Exception {
-
         if (result.hasErrors()) {
             throw new BadRequestEx(result.getAllErrors().toString());
         }
 
         User user = userSvc.getUserByUserName(loginUser.getUsername());
-
-        if (user.getPassword().equals(loginUser.getPassword())) {
+        if (encoder.matches(loginUser.getPassword(),user.getPassword())) {
             String token = jwtTools.createToken(user);
             return CustomResponse.success(HttpStatus.OK.toString(),token,HttpStatus.OK);
         }else {

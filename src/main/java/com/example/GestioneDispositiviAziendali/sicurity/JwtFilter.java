@@ -45,16 +45,19 @@ public class JwtFilter extends OncePerRequestFilter {
             throw new RuntimeException(e);
         }
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(utente, null);
-
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(utente,
+                null,utente.getAuthorities());
+        System.out.println(authorization);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         filterChain.doFilter(request,response);
 
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return new AntPathMatcher().match("/auth/**", request.getServletPath());
+        String servletPath = request.getServletPath();
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+
+        return pathMatcher.match("/auth/**",servletPath);
     }
 }
